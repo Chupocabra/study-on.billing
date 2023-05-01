@@ -71,8 +71,8 @@ class UserController extends AbstractController
      *     response="default",
      *     description="Ошибка",
      *     @OA\JsonContent(
-     *       @OA\Property(property="message", type="string",
-     *     example="Error")
+     *       @OA\Property(property="code", type="string", example="400"),
+     *       @OA\Property(property="message", type="string", example="Error")
      *     )
      * )
      * @OA\Tag(name="User")
@@ -110,14 +110,16 @@ class UserController extends AbstractController
      *     response=409,
      *     description="Email уже зарегистрирован",
      *     @OA\JsonContent(
+     *       @OA\Property(property="code", type="string", example="409"),
      *       @OA\Property(property="message", type="string",
-     *     example="Пользователь с таким email уже существует")
+     *     example="Пользователь с таким email уже существует"),
      *     )
      * )
      * @OA\Response(
      *     response=400,
      *     description="Ошибки валидации",
      *     @OA\JsonContent(
+     *       @OA\Property(property="code", type="string", example="400"),
      *       @OA\Property(property="errors", type="array",
      *         @OA\Items(@OA\Property(type="string", property="error"))
      *     ),
@@ -127,7 +129,8 @@ class UserController extends AbstractController
      *     response="default",
      *     description="Ошибка",
      *     @OA\JsonContent(
-     *       @OA\Property(property="error", type="string",
+     *       @OA\Property(property="code", type="string", example="400"),
+     *       @OA\Property(property="message", type="string",
      *     example="Error")
      *     )
      * )
@@ -135,8 +138,8 @@ class UserController extends AbstractController
      * @Route("/register", name="api_register", methods={"POST"})
      */
     public function register(
-        Request                  $request,
-        UserRepository           $userRepository,
+        Request $request,
+        UserRepository $userRepository,
         JWTTokenManagerInterface $JWTManager
     ): JsonResponse {
         $dto = $this->serializer->deserialize($request->getContent(), UserDTO::class, 'json');
@@ -147,11 +150,13 @@ class UserController extends AbstractController
                 $errors_json[$error->getPropertyPath()] = $error->getMessage();
             }
             return new JsonResponse([
+                'code' => '400',
                 'errors' => $errors_json
             ], Response::HTTP_BAD_REQUEST);
         }
         if ($userRepository->findOneBy(['email' => $dto->username])) {
             return new JsonResponse([
+                'code' => '409',
                 'error' => 'Пользователь с таким email уже зарегистрирован'
             ], Response::HTTP_CONFLICT);
         }
@@ -183,8 +188,8 @@ class UserController extends AbstractController
      *     response="default",
      *     description="Ошибка",
      *     @OA\JsonContent(
-     *       @OA\Property(property="error", type="string",
-     *     example="Error")
+     *       @OA\Property(property="code", type="string", example="400"),
+     *       @OA\Property(property="message", type="string", example="Error")
      *     )
      * )
      * @Route("/users/current", name="api_get_current", methods={"GET"})
@@ -195,6 +200,7 @@ class UserController extends AbstractController
     {
         if (!$this->getUser()) {
             return new JsonResponse([
+                "code" => '401',
                 "message" => "Пользователь не авторизован"
             ], Response::HTTP_UNAUTHORIZED);
         }
