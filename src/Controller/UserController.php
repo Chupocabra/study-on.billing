@@ -157,7 +157,7 @@ class UserController extends AbstractController
         if ($userRepository->findOneBy(['email' => $dto->username])) {
             return new JsonResponse([
                 'code' => '409',
-                'error' => 'Пользователь с таким email уже зарегистрирован'
+                'message' => 'Пользователь с таким email уже зарегистрирован'
             ], Response::HTTP_CONFLICT);
         }
         $user = User::fromDto($dto);

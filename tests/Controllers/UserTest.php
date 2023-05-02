@@ -139,7 +139,7 @@ class UserTest extends AbstractTest
         $this->assertResponseCode(Response::HTTP_CONFLICT, $client->getResponse());
         // Сообщение об ошибке
         $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertEquals('Пользователь с таким email уже зарегистрирован', $data['error']);
+        $this->assertEquals('Пользователь с таким email уже зарегистрирован', $data['message']);
     }
     // Регистрация с пустыми полями
     public function testRegisterEmptyFields(): void
