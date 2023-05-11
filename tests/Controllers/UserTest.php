@@ -3,20 +3,26 @@
 namespace App\Tests\Controllers;
 
 use App\DataFixtures\AppFixtures;
-use App\Entity\User;
+use App\DataFixtures\CourseFixtures;
+use App\DataFixtures\TransactionsFixtures;
 use App\Repository\UserRepository;
+use App\Service\PaymentService;
 use App\Tests\AbstractTest;
-use Doctrine\Common\Collections\Criteria;
-use http\Message;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserTest extends AbstractTest
 {
     protected function getFixtures(): array
     {
-        return [new AppFixtures(
-            self::getContainer()->get('security.user_password_hasher')
-        )];
+        return [
+            new AppFixtures(
+                self::getContainer()->get(UserPasswordHasherInterface::class),
+                self::getContainer()->get(PaymentService::class)
+            ),
+            new CourseFixtures(),
+            new TransactionsFixtures(),
+        ];
     }
 
     // Авторизация с неправильными данными
@@ -50,6 +56,7 @@ class UserTest extends AbstractTest
         // Пришел токен
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertNotEmpty($data['token']);
+        $this->assertNotEmpty($data['refresh_token']);
     }
 
     // Регистрация с неправильным email
@@ -74,6 +81,7 @@ class UserTest extends AbstractTest
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertEquals('Неверный почтовый адрес', $data['errors']['username']);
     }
+
     // Регистрация с коротким паролем
     public function testRegisterShortPassword(): void
     {
@@ -119,6 +127,7 @@ class UserTest extends AbstractTest
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertEquals('Пароль должен содержать не более 16 символов', $data['errors']['password']);
     }
+
     // Регитрация с уже зарегистрированным email
     public function testRegisterNotUniqEmail(): void
     {
@@ -141,6 +150,7 @@ class UserTest extends AbstractTest
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertEquals('Пользователь с таким email уже зарегистрирован', $data['message']);
     }
+
     // Регистрация с пустыми полями
     public function testRegisterEmptyFields(): void
     {
@@ -164,6 +174,7 @@ class UserTest extends AbstractTest
         $this->assertEquals('Укажите почтовый адрес', $data['errors']['username']);
         $this->assertEquals('Заполните поле с паролем', $data['errors']['password']);
     }
+
     // Регистрация
     public function testRegister(): void
     {
@@ -189,8 +200,10 @@ class UserTest extends AbstractTest
         // Ответ api
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertNotEmpty($data['token']);
+        $this->assertNotEmpty($data['refresh_token']);
         $this->assertEquals('ROLE_USER', $data['roles'][0]);
     }
+
     // Получить текущего пользователя, неавторизован
     public function testGetCurrentUserUnauthorized(): void
     {
@@ -208,6 +221,7 @@ class UserTest extends AbstractTest
         $this->assertEquals('401', $data['code']);
         $this->assertEquals('JWT Token not found', $data['message']);
     }
+
     // Получить текущего пользователя, неравильный токен
     public function testGetCurrentUserWrongToken(): void
     {
@@ -227,6 +241,7 @@ class UserTest extends AbstractTest
         $this->assertEquals('401', $data['code']);
         $this->assertEquals('Invalid JWT Token', $data['message']);
     }
+
     // Получить токен
     private function getToken($user): string
     {
@@ -243,6 +258,7 @@ class UserTest extends AbstractTest
         $data = json_decode($client->getResponse()->getContent(), true);
         return $data['token'];
     }
+
     // Получить текущего пользователя
     public function testGetCurrentUser(): void
     {

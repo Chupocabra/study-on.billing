@@ -12,6 +12,7 @@
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.14",
+        "gesdinet/jwt-refresh-token-bundle": "^1.1",
         "jms/serializer-bundle": "^5.2",
         "lexik/jwt-authentication-bundle": "^2.18",
         "nelmio/api-doc-bundle": "^4.11",
@@ -28,7 +29,8 @@
         "symfony/validator": "5.4.*",
         "symfony/yaml": "5.4.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+      "ext-json": "*"
     },
     "config": {
         "allow-plugins": {
@@ -82,7 +84,6 @@
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.7",
         "symfony/browser-kit": "5.4.*",
-        "symfony/dom-crawler": "5.4.*",
-      "ext-json": "*"
+        "symfony/dom-crawler": "5.4.*"
     }
 }
