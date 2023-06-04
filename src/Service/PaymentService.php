@@ -7,8 +7,8 @@ use App\Entity\Transaction;
 use App\Entity\User;
 use DateInterval;
 use DateTimeImmutable;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 class PaymentService
@@ -30,7 +30,7 @@ class PaymentService
         $this->entityManager->getConnection()->beginTransaction();
         try {
             if ($user->getBalance() < $course->getPrice()) {
-                throw new \RuntimeException('На вашем счету недостаточно средств.', Response::HTTP_NOT_ACCEPTABLE);
+                throw new Exception('На вашем счету недостаточно средств.', Response::HTTP_NOT_ACCEPTABLE);
             }
             $transaction = new Transaction();
             $transaction
@@ -46,9 +46,9 @@ class PaymentService
             $this->entityManager->persist($transaction);
             $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->entityManager->getConnection()->rollBack();
-            throw new \RuntimeException($e->getMessage(), $e->getCode());
+            throw new Exception($e->getMessage(), $e->getCode());
         }
         return $transaction;
     }
@@ -70,9 +70,9 @@ class PaymentService
             $this->entityManager->persist($transaction);
             $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->entityManager->getConnection()->rollBack();
-            throw new \RuntimeException($e->getMessage(), $e->getCode());
+            throw new Exception($e->getMessage(), $e->getCode());
         }
     }
 }
