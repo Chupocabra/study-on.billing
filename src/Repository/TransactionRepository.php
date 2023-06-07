@@ -60,6 +60,37 @@ class TransactionRepository extends ServiceEntityRepository
         return $query->getQuery()->getResult();
     }
 
+    public function findExpiredTransactions(User $user)
+    {
+        $start = new \DateTimeImmutable();
+        $end = $start->add(new \DateInterval('P1D'));
+        $query = $this->createQueryBuilder('t')
+            ->select('c.title as title', 't.expire as expire')
+            ->join('t.course', 'c')
+            ->andWhere('t.client = :user')
+            ->setParameter('user', $user->getId())
+            ->andWhere('c.type = 1')
+            ->andWhere('t.expire BETWEEN :start AND :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->orderBy('t.date_time', 'DESC');
+        return $query->getQuery()->getResult();
+    }
+
+    public function findTransactionsForReport(\DateTimeImmutable $start, \DateTimeImmutable $end)
+    {
+        $query = 'SELECT c.title as title, c.type as type, count(t.id) as count, sum(t.value) as total 
+                    FROM App\Entity\Transaction t, App\Entity\Course c
+                    WHERE c.type <> 2 AND t.course = c.id AND t.date_time BETWEEN :start AND :end
+                    GROUP BY c.title, c.type';
+        return $this
+            ->getEntityManager()
+            ->createQuery($query)
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getResult();
+    }
+
 //    /**
 //     * @return Transaction[] Returns an array of Transaction objects
 //     */

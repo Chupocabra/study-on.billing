@@ -70,6 +70,56 @@ class TransactionsFixtures extends Fixture implements OrderedFixtureInterface
                 'date_time' => (new \DateTimeImmutable())->sub(new \DateInterval('P8D')),
                 'course' => $courseRepository->findOneBy(['code' => 'java-dev'])
             ],
+            // newTransactions
+            // пополнил
+            [
+                'client' => $user,
+                'type' => 2,
+                'value' => 1000,
+                'date_time' => new \DateTimeImmutable(),
+            ],
+            // арендовал
+            [
+                'client' => $user,
+                'type' => 1,
+                'value' => $courseRepository->findOneBy(['code' => 'python-dev'])->getPrice(),
+                'date_time' => new \DateTimeImmutable(),
+                'expire' => (new \DateTimeImmutable())->add(new \DateInterval('P7D')),
+                'course' => $courseRepository->findOneBy(['code' => 'python-dev'])
+            ],
+            // пополнил
+            [
+                'client' => $admin,
+                'type' => 2,
+                'value' => 1000,
+                'date_time' => new \DateTimeImmutable(),
+            ],
+            // арендовал
+            [
+                'client' => $admin,
+                'type' => 1,
+                'value' => $courseRepository->findOneBy(['code' => 'python-dev'])->getPrice(),
+                'date_time' => new \DateTimeImmutable(),
+                'expire' => (new \DateTimeImmutable())->add(new \DateInterval('P7D')),
+                'course' => $courseRepository->findOneBy(['code' => 'python-dev'])
+            ],
+            // купил
+            [
+                'client' => $admin,
+                'type' => 1,
+                'value' => $courseRepository->findOneBy(['code' => 'java-dev'])->getPrice(),
+                'date_time' => new \DateTimeImmutable(),
+                'course' => $courseRepository->findOneBy(['code' => 'java-dev'])
+            ],
+            // арендовал
+            [
+                'client' => $admin,
+                'type' => 1,
+                'value' => $courseRepository->findOneBy(['code' => 'data-analyst'])->getPrice(),
+                'date_time' => new \DateTimeImmutable(),
+                'expire' => (new \DateTimeImmutable())->add(new \DateInterval('P7D')),
+                'course' => $courseRepository->findOneBy(['code' => 'data-analyst'])
+            ],
         ];
         foreach ($transactions as $t) {
             $transaction = new Transaction();

@@ -20,7 +20,7 @@ class TransactionsController extends AbstractController
 {
     /**
      * @OA\Get(
-     *     path="",
+     *     path="/api/v1/transactions",
      *     summary="Получить все транзакции пользователя с фильтрами",
      *     description="Получить все транзакции пользователя с фильтрами",
      * )

@@ -48,7 +48,7 @@ class UserController extends AbstractController
 
     /**
      * @OA\POST(
-     *   path="/auth",
+     *   path="/api/v1/auth",
      *   summary="Вход",
      *   description="Логин с помощью email и пароль",
      * )
@@ -57,8 +57,8 @@ class UserController extends AbstractController
      *   description="Введите данные пользователя",
      *   @OA\JsonContent(
      *     required={"username", "password"},
-     *     @OA\Property(property="username", type="string", format="email", example="user@email.com"),
-     *     @OA\Property(property="password", type="string", format="password", example="PassWord1234"),
+     *     @OA\Property(property="username", type="string", format="email", example="my_user@email.com"),
+     *     @OA\Property(property="password", type="string", format="password", example="user"),
      *     )
      *   )
      * )
@@ -96,7 +96,7 @@ class UserController extends AbstractController
 
     /**
      * @OA\Post(
-     *   path="/register",
+     *   path="/api/v1/register",
      *   summary="Регистрация",
      *   description="Регистрация с помощью email и password",
      * )
@@ -195,7 +195,7 @@ class UserController extends AbstractController
 
     /**
      * @OA\Get(
-     *   path="/users/current",
+     *   path="/api/v1/users/current",
      *   summary="Текущий пользователь",
      *   description="Получить токен текущего пользователя",
      * )
@@ -238,7 +238,7 @@ class UserController extends AbstractController
 
     /**
      * @OA\Post(
-     *   path="/token/refresh",
+     *   path="/api/v1/token/refresh",
      *   summary="Обновить JWT",
      *   description="Обновление JWT",
      * )
